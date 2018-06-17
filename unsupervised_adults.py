@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, naive_bayes
+from sklearn import preprocessing, cluster
 import pickle
 from collections import Counter
 
@@ -10,33 +10,34 @@ def main():
 	TRAIN = pd.read_csv('adult_train.csv', names=FEATURES)
 	TEST = pd.read_csv('adult_test.csv', names=FEATURES)
 
-	TRAIN=remove_garbage(TRAIN)
-	numeritize(TRAIN)
+	x = pd.concat((TRAIN, TEST), axis=0)
+	original = pd.DataFrame.copy(x)
 
-	TEST=remove_garbage(TEST)
-	numeritize(TEST)
+	x=remove_garbage(x)
+	numeritize(x)
 
-	x_train = TRAIN.drop(['Final Weight', 'Label'], 1)
-	y_train = TRAIN['Label']
+	x = x.drop(['Final Weight', 'Label'], 1)
+	x = preprocessing.scale(x)
+	
+	#clf = cluster.MeanShift(n_jobs=-1)
+	#clf.fit(x, y)
 
-	x_train = preprocessing.scale(x_train)
+	#with open('MeanShift.pickle', 'wb') as f:
+	#pickle.dump(clf, f)
 
-	clf = naive_bayes.GaussianNB()
-	clf.fit(x_train, y_train)
+	pickle_in = open('MeanShift.pickle', 'rb')
+	clf = pickle.load(pickle_in)
 
-	#with open('NB.pickle', 'wb') as f:
-		#pickle.dump(clf, f)
+	centers = clf.cluster_centers_
+	labels = clf.labels_
 
-	#pickle_in = open('support_vector.pickle', 'rb')
-	#clf = pickle.load(pickle_in)
+	n_clusters_ = len(np.unique(labels))
+	original['cluster'] = np.nan
 
-	x_test = TEST.drop(['Final Weight', 'Label'], 1)
-	y_test = TEST['Label']
+	for i in range(len(x)):
+		original['cluster'].iloc[i] = labels[i]
 
-	x_test = preprocessing.scale(x_test)
-
-	accuracy = clf.score(x_test, y_test)
-	print(accuracy)
+	print(original)
 
 
 def remove_garbage(df):

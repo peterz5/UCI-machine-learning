@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, naive_bayes
+from sklearn import preprocessing, cluster
 import pickle
 from collections import Counter
+from sklearn.metrics import accuracy_score
 
 def main():
 	FEATURES = ['Age', 'Workclass', 'Final Weight', 'Education', 'Education-num', 'Marital-status', 'Occupation', 'Relationship', 'Race', 'Sex', 'Capital-gain', 'Capital-loss', 'Hours-per-week', 'Native-country', 'Label']
@@ -10,33 +11,29 @@ def main():
 	TRAIN = pd.read_csv('adult_train.csv', names=FEATURES)
 	TEST = pd.read_csv('adult_test.csv', names=FEATURES)
 
-	TRAIN=remove_garbage(TRAIN)
-	numeritize(TRAIN)
+	x = pd.concat((TRAIN, TEST), axis=0)
+	original = pd.DataFrame.copy(x)
 
-	TEST=remove_garbage(TEST)
-	numeritize(TEST)
+	x=remove_garbage(x)
+	numeritize(x)
 
-	x_train = TRAIN.drop(['Final Weight', 'Label'], 1)
-	y_train = TRAIN['Label']
+	y = x['Label']
+	x = x.drop(['Final Weight', 'Label'], 1)
 
-	x_train = preprocessing.scale(x_train)
+	x = preprocessing.scale(x)
 
-	clf = naive_bayes.GaussianNB()
-	clf.fit(x_train, y_train)
+	clf = cluster.KMeans(n_clusters=2, n_jobs=-1)
+	clf.fit(x)
 
-	#with open('NB.pickle', 'wb') as f:
-		#pickle.dump(clf, f)
+	with open('KMeans.pickle', 'wb') as f:
+		pickle.dump(clf, f)
 
 	#pickle_in = open('support_vector.pickle', 'rb')
 	#clf = pickle.load(pickle_in)
 
-	x_test = TEST.drop(['Final Weight', 'Label'], 1)
-	y_test = TEST['Label']
-
-	x_test = preprocessing.scale(x_test)
-
-	accuracy = clf.score(x_test, y_test)
-	print(accuracy)
+	print(clf.cluster_centers_)
+	print(clf.labels_)
+	print(accuracy_score(clf.labels_, y))
 
 
 def remove_garbage(df):
