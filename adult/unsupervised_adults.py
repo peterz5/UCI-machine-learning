@@ -65,7 +65,6 @@ def numeritize(df):
 					j+=1
 
 			df[col] = df[col].apply(convert_to_num)
-
 	return df
 
 if __name__ == '__main__':

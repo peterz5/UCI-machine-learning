@@ -25,11 +25,11 @@ def main():
 	clf = cluster.KMeans(n_clusters=2, n_jobs=-1)
 	clf.fit(x)
 
-	with open('KMeans.pickle', 'wb') as f:
-		pickle.dump(clf, f)
+	#with open('KMeans.pickle', 'wb') as f:
+		#pickle.dump(clf, f)
 
-	#pickle_in = open('support_vector.pickle', 'rb')
-	#clf = pickle.load(pickle_in)
+	pickle_in = open('KMeans.pickle', 'rb')
+	clf = pickle.load(pickle_in)
 
 	print(clf.cluster_centers_)
 	print(clf.labels_)

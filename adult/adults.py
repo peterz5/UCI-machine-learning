@@ -27,8 +27,8 @@ def main():
 	#with open('NB.pickle', 'wb') as f:
 		#pickle.dump(clf, f)
 
-	#pickle_in = open('support_vector.pickle', 'rb')
-	#clf = pickle.load(pickle_in)
+	pickle_in = open('support_vector.pickle', 'rb')
+	clf = pickle.load(pickle_in)
 
 	x_test = TEST.drop(['Final Weight', 'Label'], 1)
 	y_test = TEST['Label']
