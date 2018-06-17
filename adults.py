@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing,naive_bayes
+from sklearn import preprocessing,naive_bayes, svm, neighbors
 import pickle
+from collections import Counter
 
 def main():
 	FEATURES = ['Age', 'Workclass', 'Final Weight', 'Education', 'Education-num', 'Marital-status', 'Occupation', 'Relationship', 'Race', 'Sex', 'Capital-gain', 'Capital-loss', 'Hours-per-week', 'Native-country', 'Label']
@@ -15,27 +16,34 @@ def main():
 	TEST=remove_garbage(TEST)
 	numeritize(TEST)
 
-	x_train = TRAIN.drop('Label', 1)
+	x_train = TRAIN.drop(['Final Weight', 'Label'], 1)
 	y_train = TRAIN['Label']
+
+	me = x_train.iloc[[-1]]
+	x_train = x_train[:-1]
+	y_train = y_train[:-1]
 
 	x_train = preprocessing.scale(x_train)
 
 	clf = naive_bayes.GaussianNB()
 	clf.fit(x_train, y_train)
 
-	with open('NB.pickle', 'wb') as f:
-		pickle.dump(clf, f)
+	#with open('NB.pickle', 'wb') as f:
+		#pickle.dump(clf, f)
 
 	#pickle_in = open('support_vector.pickle', 'rb')
 	#clf = pickle.load(pickle_in)
 
-	x_test = TEST.drop('Label', 1)
+	x_test = TEST.drop(['Final Weight', 'Label'], 1)
 	y_test = TEST['Label']
 
 	x_test = preprocessing.scale(x_test)
 
 	accuracy = clf.score(x_test, y_test)
 	print(accuracy)
+	whatami = clf.predict(me)
+	print(whatami)
+
 
 def remove_garbage(df):
 	df.replace(' ?', np.NaN, inplace=True)
