@@ -33,6 +33,15 @@ pickle_in =  open('RandomForest.pickle', 'rb')
 clf = pickle.load(pickle_in)
 
 print(clf.score(x_test, y_test))
+
 feats = clf.feature_importances_
+feats = [round(i, 5) for i in feats]
+
+'''
+arr = list(zip(FEATURES, feats))
+sorted_feats = sorted(arr, key=lambda tup: tup[1])
+d = dict(sorted_feats[-40:])
+print(d)
+'''
 print(feats)
 print(FEATURES[np.argmax(feats)], ', ', np.max(feats))
