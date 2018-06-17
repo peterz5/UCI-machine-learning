@@ -1,7 +1,7 @@
 
 import pandas as pd 
 import numpy as np 
-from sklearn import preprocessing, model_selection, naive_bayes
+from sklearn import preprocessing, model_selection, ensemble
 
 def main():
 	FEATURES = ['Buying', 'Maint', 'Doors', 'Persons', 'Lug_boot', 'Safety', 'Label'] 
@@ -16,10 +16,13 @@ def main():
 
 	x_train, x_test, y_train, y_test = model_selection.train_test_split(x, y, test_size=.2)
 
-	clf = naive_bayes.GaussianNB()
+	clf = ensemble.RandomForestClassifier()
 	clf.fit(x_train, y_train)
 
 	print(clf.score(x_test, y_test))
+	important_feats = clf.feature_importances_
+	print(important_feats)
+	print(FEATURES[np.argmax(important_feats)])
 
 def str_to_num(df):
 	columns = df.columns.values
