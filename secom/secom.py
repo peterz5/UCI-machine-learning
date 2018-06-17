@@ -37,6 +37,7 @@ print(clf.score(x_test, y_test))
 feats = clf.feature_importances_
 feats = [round(i, 5) for i in feats]
 
+#To get top 40 by value and id
 '''
 arr = list(zip(FEATURES, feats))
 sorted_feats = sorted(arr, key=lambda tup: tup[1])
